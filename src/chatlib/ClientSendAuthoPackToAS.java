@@ -25,7 +25,7 @@ public class ClientSendAuthoPackToAS implements DialogPacketSender {
     }
 
     @Override
-    public boolean putAndFrowToAuthServ() {
+    public boolean putAndFrow() {
         authPacket = new DialogPacket(login, "0", "0", 0, 0);
         try {
             oos.writeObject(authPacket);
@@ -35,10 +35,4 @@ public class ClientSendAuthoPackToAS implements DialogPacketSender {
         }
         return true;
     }
-
-    @Override
-    public boolean putAndFrowToCl() {
-        return false;
-    }
-
 }

@@ -30,7 +30,7 @@ public class AuthoPackBackToUser implements DialogPacketSender {
     }
 
     @Override
-    public boolean putAndFrowToCl() {
+    public boolean putAndFrow() {
         AuthPacketBack = new DialogPacket(connectOrNotString, connectOrNotString, connectOrNotString, sessionID, timeStampDef);
         try {
             oos.writeObject(AuthPacketBack);
@@ -39,10 +39,5 @@ public class AuthoPackBackToUser implements DialogPacketSender {
             return false;
         }
         return true;
-    }
-
-    @Override
-    public boolean putAndFrowToAuthServ() {
-        return false;
     }
 }
