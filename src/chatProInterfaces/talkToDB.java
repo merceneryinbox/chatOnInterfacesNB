@@ -46,7 +46,5 @@ public interface talkToDB {
 	"insert into chatpro.illigalattempt(login,pas,mes,ses,timeoftheattempt,ipadressofattempt) values (?,?,?,?,?,?)");*/
     public void bannU(String login);
 
-    public void disconnectBannedU();
-
-    public void clearSessionTab();
+    public void clearUSessionTab(String login);
 }

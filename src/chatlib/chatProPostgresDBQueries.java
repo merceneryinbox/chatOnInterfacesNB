@@ -7,6 +7,7 @@ package chatlib;
 
 import chatProInterfaces.talkToDB;
 import java.net.Socket;
+import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -27,7 +28,7 @@ public class chatProPostgresDBQueries implements talkToDB {
     private static PreparedStatement pSSaveStoryInSessions;
     private static PreparedStatement psSIlligalAttempt;
     private static PreparedStatement psBanU;
-
+    private static CallableStatement psClearSession;
     private static ResultSet resultSetCheck;
     private static boolean coded;
 
@@ -45,6 +46,7 @@ public class chatProPostgresDBQueries implements talkToDB {
             pSSaveStoryInSessions = connection.prepareStatement(
                     "insert into chatpro.sessionsstory (login, sessionid, messages, timeincome) values(?,?,?,?)");
             psBanU = connection.prepareStatement("update users set code = -1 where upper(login) = upper(?);");
+            psClearSession = connection.prepareCall("delete fromapprovedsessions where upper(login) = upper(?);");
 
         } catch (SQLException e) {
         }
@@ -69,8 +71,8 @@ public class chatProPostgresDBQueries implements talkToDB {
             psSRegistration.setString(1, login);
             psSRegistration.setString(2, pass);
             psSRegistration.setInt(3, code);
-            psSRegistration.executeQuery();
-        } catch (Exception e) {
+            psSRegistration.executeUpdate();
+        } catch (SQLException e) {
         }
     }
 
@@ -80,7 +82,7 @@ public class chatProPostgresDBQueries implements talkToDB {
             pSSesionAprove.setString(1, login);
             pSSesionAprove.setInt(2, sessionID);
             pSSesionAprove.setLong(3, timestamp);
-            pSSesionAprove.executeQuery();
+            pSSesionAprove.executeUpdate();
         } catch (SQLException e) {
         }
     }
@@ -145,19 +147,17 @@ public class chatProPostgresDBQueries implements talkToDB {
     public void bannU(String login) {
         try {
             psBanU.setString(1, login);
-            psBanU.executeQuery();
-        } catch (Exception e) {
+            psBanU.executeUpdate();
+        } catch (SQLException e) {
         }
     }
 
     @Override
-    public void disconnectBannedU() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void clearUSessionTab(String login) {
+        try {
+            psClearSession.setString(1, login);
+            psClearSession.executeUpdate();
+        } catch (SQLException e) {
+        }
     }
-
-    @Override
-    public void clearSessionTab() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
 }
