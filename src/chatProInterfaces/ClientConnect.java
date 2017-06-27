@@ -5,7 +5,7 @@
  */
 package chatProInterfaces;
 
-import java.sql.Connection;
+import java.net.Socket;
 
 /**
  *
@@ -13,5 +13,5 @@ import java.sql.Connection;
  */
 public interface ClientConnect {
 
-    public Connection connectToServer();
+    public Socket connectToServer();
 }
