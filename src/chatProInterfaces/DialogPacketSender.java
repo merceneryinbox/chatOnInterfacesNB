@@ -11,7 +11,7 @@ package chatProInterfaces;
  */
 public interface DialogPacketSender {
 
-    public void putValuesintoPack();
+    public boolean putAndFrowToCl();
 
-    public boolean frowPackToSock();
+    public boolean putAndFrowToAuthServ();
 }

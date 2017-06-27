@@ -5,7 +5,7 @@
  */
 package chatlib;
 
-import chatProInterfaces.talkToDB;
+import chatProInterfaces.TalkToDB;
 import java.net.Socket;
 import java.sql.CallableStatement;
 import java.sql.Connection;
@@ -18,7 +18,7 @@ import markerIface.DialogPacket;
  *
  * @author mercenery
  */
-public class chatProPostgresDBQueries implements talkToDB {
+public class ChatProPostgresDBQueries implements TalkToDB {
 
     private static Connection connection;
     private static PreparedStatement pSCheckRequest;
@@ -30,9 +30,9 @@ public class chatProPostgresDBQueries implements talkToDB {
     private static PreparedStatement psBanU;
     private static CallableStatement psClearSession;
     private static ResultSet resultSetCheck;
-    private static boolean coded;
+    private static int coded;
 
-    public chatProPostgresDBQueries() {
+    public ChatProPostgresDBQueries() {
         try {
             pSCheckRequest = connection.prepareStatement(
                     "select code from chatpro.users  where upper(login) = upper" + "(?)");
@@ -53,12 +53,12 @@ public class chatProPostgresDBQueries implements talkToDB {
     }
 
     @Override
-    public boolean checkRegistration(String code) {
+    public int checkPermission(String login) {
         try {
-            pSCheckRequest.setString(1, code);
+            pSCheckRequest.setString(1, login);
             resultSetCheck = pSCheckRequest.executeQuery();
             resultSetCheck.next();
-            coded = !resultSetCheck.getString("code").equalsIgnoreCase(null);
+            coded = resultSetCheck.getInt("code");
         } catch (SQLException e) {
         }
 

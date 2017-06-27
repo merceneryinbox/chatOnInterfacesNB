@@ -12,9 +12,9 @@ import markerIface.DialogPacket;
  *
  * @author mercenery
  */
-public interface talkToDB {
+public interface TalkToDB {
 
-    public boolean checkRegistration(String code);
+    public int checkPermission(String login);
 
     /* pSCheckRequest = connection.prepareStatement(
 	"select code from chatpro.users  where upper(login) = upper" + "(?)");*/

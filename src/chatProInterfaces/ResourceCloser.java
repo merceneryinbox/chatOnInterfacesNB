@@ -5,13 +5,11 @@
  */
 package chatProInterfaces;
 
-import markerIface.DialogPacket;
-
 /**
  *
  * @author mercenery
  */
-public interface DialogPackReader {
+public interface ResourceCloser {
 
-    public DialogPacket lookingForPacket();
+    public void closeResources();
 }

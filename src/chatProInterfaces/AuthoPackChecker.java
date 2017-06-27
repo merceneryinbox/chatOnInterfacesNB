@@ -5,11 +5,13 @@
  */
 package chatProInterfaces;
 
+import markerIface.DialogPacket;
+
 /**
  *
  * @author mercenery
  */
-public interface resourceCloser {
+public interface AuthoPackChecker {
 
-    public void closeResources();
+    public boolean authoCheck(DialogPacket authPack);
 }
