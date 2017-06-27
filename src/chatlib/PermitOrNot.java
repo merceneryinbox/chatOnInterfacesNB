@@ -14,12 +14,19 @@ import markerIface.DialogPacket;
  */
 public class PermitOrNot implements AuthoPackChecker {
 
-    private ChatProPostgresDBQueries talkToDb;
-    private int isLogOk;
-    private boolean returnState = false;
+    private static DialogPacket authPack;
+    private static ChatProPostgresDBQueries talkToDb;
+    private static int isLogOk;
+    private static boolean returnState = false;
+
+    public PermitOrNot(ChatProPostgresDBQueries talkToDb, int isLogOk, DialogPacket authPack) {
+        PermitOrNot.talkToDb = talkToDb;
+        PermitOrNot.isLogOk = isLogOk;
+        PermitOrNot.authPack = authPack;
+    }
 
     @Override
-    public boolean authoCheck(DialogPacket authPack) {
+    public boolean authoCheck() {
         String login = authPack.log;
         String password = authPack.pass;
         isLogOk = talkToDb.checkPermission(login);

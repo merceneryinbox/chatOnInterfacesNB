@@ -6,6 +6,7 @@
 package chatlib;
 
 import chatProInterfaces.DialogPacketSender;
+import java.io.IOException;
 import java.io.ObjectOutputStream;
 import markerIface.DialogPacket;
 
@@ -20,8 +21,8 @@ public class ClientSendAuthoPackToAS implements DialogPacketSender {
     private static String login;
 
     public ClientSendAuthoPackToAS(ObjectOutputStream oos, String login) {
-        this.oos = oos;
-        this.login = login;
+        ClientSendAuthoPackToAS.oos = oos;
+        ClientSendAuthoPackToAS.login = login;
     }
 
     @Override
@@ -30,7 +31,7 @@ public class ClientSendAuthoPackToAS implements DialogPacketSender {
         try {
             oos.writeObject(authPacket);
             oos.flush();
-        } catch (Exception e) {
+        } catch (IOException e) {
             return false;
         }
         return true;

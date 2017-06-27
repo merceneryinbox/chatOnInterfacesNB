@@ -5,13 +5,11 @@
  */
 package chatProInterfaces;
 
-import markerIface.DialogPacket;
-
 /**
  *
  * @author mercenery
  */
 public interface AuthoPackChecker {
 
-    public boolean authoCheck(DialogPacket authPack);
+    public boolean authoCheck();
 }
