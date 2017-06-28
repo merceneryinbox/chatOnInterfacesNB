@@ -61,34 +61,37 @@ public class ChatProPostgresDBQueries implements TalkToDB {
             coded = resultSetCheck.getInt("code");
         } catch (SQLException e) {
         }
-
         return coded;
     }
 
     @Override
-    public void registrate(String login, String pass, int code) {
+    public boolean registrate(String login, String pass, int code) {
         try {
             psSRegistration.setString(1, login);
             psSRegistration.setString(2, pass);
             psSRegistration.setInt(3, code);
             psSRegistration.executeUpdate();
         } catch (SQLException e) {
+            return false;
         }
+        return true;
     }
 
     @Override
-    public void sessionAssigne(String login, int sessionID, long timestamp) {
+    public boolean sessionAssigne(String login, int sessionID, long timestamp) {
         try {
             pSSesionAprove.setString(1, login);
             pSSesionAprove.setInt(2, sessionID);
             pSSesionAprove.setLong(3, timestamp);
             pSSesionAprove.executeUpdate();
         } catch (SQLException e) {
+            return false;
         }
+        return true;
     }
 
     @Override
-    public void saveFirstPackToDB(DialogPacket dpFirst) {
+    public boolean saveFirstPackToDB(DialogPacket dpFirst) {
         String logFromUser = dpFirst.log;
         int sessionidFromUser = dpFirst.sessionId;
         long timeStampServerDialog = dpFirst.timeStampFromDiPa;
@@ -100,11 +103,13 @@ public class ChatProPostgresDBQueries implements TalkToDB {
             pSSaveFirstPackInUsers.executeUpdate();
             pSSaveFirstPackInUsers.close();
         } catch (SQLException e) {
+            return false;
         }
+        return true;
     }
 
     @Override
-    public void saveChatStory(DialogPacket dpStory) {
+    public boolean saveChatStory(DialogPacket dpStory) {
         String login = dpStory.log;
         int sessionID = dpStory.sessionId;
         String messinPack = dpStory.message;
@@ -118,12 +123,14 @@ public class ChatProPostgresDBQueries implements TalkToDB {
 
             pSSaveStoryInSessions.executeUpdate();
         } catch (SQLException e) {
+            return false;
         }
+        return true;
 
     }
 
     @Override
-    public void saveIllegalAttempt(Socket socket, DialogPacket dpIllegalA) {
+    public boolean saveIllegalAttempt(Socket socket, DialogPacket dpIllegalA) {
         String logFromUser = dpIllegalA.log;
         String pasFromUser = dpIllegalA.pass;
         int sessionidFromUser = dpIllegalA.sessionId;
@@ -140,24 +147,30 @@ public class ChatProPostgresDBQueries implements TalkToDB {
             psSIlligalAttempt.executeUpdate();
 
         } catch (SQLException e) {
+            return false;
         }
+        return true;
     }
 
     @Override
-    public void bannU(String login) {
+    public boolean bannU(String login) {
         try {
             psBanU.setString(1, login);
             psBanU.executeUpdate();
         } catch (SQLException e) {
+            return false;
         }
+        return true;
     }
 
     @Override
-    public void clearUSessionTab(String login) {
+    public boolean clearUSessionTab(String login) {
         try {
             psClearSession.setString(1, login);
             psClearSession.executeUpdate();
         } catch (SQLException e) {
+            return false;
         }
+        return true;
     }
 }

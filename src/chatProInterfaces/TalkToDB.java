@@ -18,33 +18,33 @@ public interface TalkToDB {
 
     /* pSCheckRequest = connection.prepareStatement(
 	"select code from chatpro.users  where upper(login) = upper" + "(?)");*/
-    public void registrate(String login, String pass, int code);
+    public boolean registrate(String login, String pass, int code);
 
     /*psSRegistration = connection.prepareStatement(
 	"insert into chatpro.users (login,pass,code) values (?,?,?) on conflict (login) do nothing;");*/
-    public void sessionAssigne(String login, int sessionID, long timestamp);
+    public boolean sessionAssigne(String login, int sessionID, long timestamp);
 
     /*pSSesionAprove = connection.prepareStatement(
 	"insert into chatpro.aprovedsessions (login,timestampforsess) values(?,?) ;");*/
-    public void saveFirstPackToDB(DialogPacket dialogPacket);
+    public boolean saveFirstPackToDB(DialogPacket dialogPacket);
 
     /*
     pSSaveFirstPackInUsers = connectionDB.prepareStatement(
 				"insert into chatpro.sessionsstory (login,sessionid,messages,timeincome) "
 				+ "values(?,?,'session start',?)");
      */
-    public void saveChatStory(DialogPacket dialogPacket);
+    public boolean saveChatStory(DialogPacket dialogPacket);
 
     /*pSSaveFirstPackInUsers = connectionDB.prepareStatement(
 	"insert into chatpro.sessionsstory (login,sessionid,messages,timeincome) "
 				+ "values(?,?,'session start',?)");*/
  /*pSSaveStoryInSessions = connectionDB.prepareStatement(
 	"insert into chatpro.sessionsstory (login, sessionid, messages, timeincome) values(?,?,?,?)");*/
-    public void saveIllegalAttempt(Socket socket, DialogPacket dpIllegalA);
+    public boolean saveIllegalAttempt(Socket socket, DialogPacket dpIllegalA);
 
     /*psSIlligalAttempt = connectionDB.prepareStatement(
 	"insert into chatpro.illigalattempt(login,pas,mes,ses,timeoftheattempt,ipadressofattempt) values (?,?,?,?,?,?)");*/
-    public void bannU(String login);
+    public boolean bannU(String login);
 
-    public void clearUSessionTab(String login);
+    public boolean clearUSessionTab(String login);
 }

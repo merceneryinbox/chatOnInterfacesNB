@@ -6,6 +6,7 @@
 package chatlib;
 
 import chatProInterfaces.ClientConnect;
+import java.io.IOException;
 import java.net.Socket;
 
 /**
@@ -20,7 +21,7 @@ public class ClientToDialogChatServerConnect implements ClientConnect {
     public Socket connectToServer() {
         try {
             dialogSock = new Socket("localhost", 55555);
-        } catch (Exception e) {
+        } catch (IOException e) {
         }
         return dialogSock;
     }
