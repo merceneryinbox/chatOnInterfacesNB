@@ -20,17 +20,19 @@ import markerIface.DialogPacket;
  */
 public class ChatProPostgresDBQueries implements TalkToDB {
 
-    private static Connection connection;
-    private static PreparedStatement pSCheckRequest;
-    private static PreparedStatement psSRegistration;
-    private static PreparedStatement pSSesionAprove;
-    private static PreparedStatement pSSaveFirstPackInUsers;
-    private static PreparedStatement pSSaveStoryInSessions;
-    private static PreparedStatement psSIlligalAttempt;
-    private static PreparedStatement psBanU;
-    private static CallableStatement psClearSession;
-    private static ResultSet resultSetCheck;
-    private static int coded;
+    private Connection connection;
+    private PreparedStatement pSCheckRequest;
+    private PreparedStatement psCheckSesRegForRunDBS;
+    private PreparedStatement psSRegistration;
+    private PreparedStatement pSSesionAprove;
+    private PreparedStatement pSSaveFirstPackInUsers;
+    private PreparedStatement pSSaveStoryInSessions;
+    private PreparedStatement psSIlligalAttempt;
+    private PreparedStatement psBanU;
+    private CallableStatement psClearSessionTab;
+    private ResultSet resultSetCheck;
+    private int coded;
+    private boolean checkSesDBS;
 
     public ChatProPostgresDBQueries() {
         try {
@@ -46,7 +48,8 @@ public class ChatProPostgresDBQueries implements TalkToDB {
             pSSaveStoryInSessions = connection.prepareStatement(
                     "insert into chatpro.sessionsstory (login, sessionid, messages, timeincome) values(?,?,?,?)");
             psBanU = connection.prepareStatement("update users set code = -1 where upper(login) = upper(?);");
-            psClearSession = connection.prepareCall("delete fromapprovedsessions where upper(login) = upper(?);");
+            psCheckSesRegForRunDBS = connection.prepareStatement("select timestampforsess from chatpro.aprovedsessions  where upper(login) = upper(?)");
+            psClearSessionTab = connection.prepareCall("delete fromapprovedsessions where upper(login) = upper(?);");
 
         } catch (SQLException e) {
         }
@@ -166,11 +169,26 @@ public class ChatProPostgresDBQueries implements TalkToDB {
     @Override
     public boolean clearUSessionTab(String login) {
         try {
-            psClearSession.setString(1, login);
-            psClearSession.executeUpdate();
+            psClearSessionTab.setString(1, login);
+            psClearSessionTab.executeUpdate();
         } catch (SQLException e) {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public boolean CheckSesAproveForDBS(String login, long timestamp) {
+        try {
+            psCheckSesRegForRunDBS.setString(1, login);
+            resultSetCheck = psCheckSesRegForRunDBS.executeQuery();
+            resultSetCheck.next();
+            long tmp = resultSetCheck.getLong("timestampforsess");
+            checkSesDBS = timestamp - tmp <= 60000;
+            this.clearUSessionTab(login); // очистка таблицы сессий после проверки
+            // в RunDialog, чтобы при следующем обращении не произошло чтение из старой записи
+        } catch (SQLException e) {
+        }
+        return checkSesDBS;
     }
 }

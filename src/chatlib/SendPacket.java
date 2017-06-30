@@ -14,12 +14,12 @@ import markerIface.DialogPacket;
  *
  * @author mercenery
  */
-public class ClientSendInLoopToDialog implements DialogPacketSender {
+public class SendPacket implements DialogPacketSender {
 
-    private ObjectOutputStream oos;
-    private DialogPacket mesPacket;
+    private final ObjectOutputStream oos;
+    private final DialogPacket mesPacket;
 
-    public ClientSendInLoopToDialog(ObjectOutputStream oos, DialogPacket mesPacket) {
+    public SendPacket(ObjectOutputStream oos, DialogPacket mesPacket) {
         this.oos = oos;
         this.mesPacket = mesPacket;
     }
@@ -29,8 +29,14 @@ public class ClientSendInLoopToDialog implements DialogPacketSender {
         try {
             oos.writeObject(mesPacket);
             oos.flush();
+            oos.close();
         } catch (IOException e) {
             return false;
+        } finally {
+            try {
+                oos.close();
+            } catch (IOException e) {
+            }
         }
         return true;
     }

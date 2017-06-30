@@ -47,4 +47,6 @@ public interface TalkToDB {
     public boolean bannU(String login);
 
     public boolean clearUSessionTab(String login);
+
+    public boolean CheckSesAproveForDBS(String login, long timestamp);
 }

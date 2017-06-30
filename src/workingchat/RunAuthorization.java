@@ -7,7 +7,9 @@ package workingchat;
 
 import chatlib.AuthoAnswerToClient;
 import chatlib.ChatProPostgresDBQueries;
-import chatlib.GetAuthoPackFromUser;
+import chatlib.GetPacket;
+import chatlib.SendPacket;
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
@@ -40,6 +42,11 @@ public class RunAuthorization implements Runnable {
         timeStampDef = new Date().getTime();
         sessionIDd = (int) (Math.random() * 1000000);
         this.socketClient = socket;
+        try {
+            ois = new ObjectInputStream(socket.getInputStream());
+            oos = new ObjectOutputStream(socket.getOutputStream());
+        } catch (IOException e) {
+        }
     }
 
     /**
@@ -47,7 +54,7 @@ public class RunAuthorization implements Runnable {
      */
     @Override
     public void run() {
-        authPacket = (new GetAuthoPackFromUser(ois).lookingForPacket());
+        authPacket = new GetPacket(ois).lookingForPacket();
         loginFromPacket = authPacket.log;
         pasFromPacket = authPacket.pass;
         isUOkInSes = new AuthoAnswerToClient(socketClient, authPacket).putAndFrow();
@@ -59,15 +66,19 @@ public class RunAuthorization implements Runnable {
                     boolean isSesAsigneOk = new ChatProPostgresDBQueries().sessionAssigne(loginFromPacket, sessionIDd, timeStampDef);
                     if (isSesAsigneOk) {
                         System.out.println("Authorization Ok!");
+                        (new SendPacket(oos, (new DialogPacket("ok", "ok", "ok", sessionIDd, timeStampDef)))).putAndFrow();
                     }
                 } else {
                     System.out.println("Registration problems.");
+                    (new SendPacket(oos, (new DialogPacket("quit", "quit", "quit", sessionIDd, timeStampDef)))).putAndFrow();
                 }
             } else {
                 System.out.println("Previouse session clearing problems.");
+                (new SendPacket(oos, (new DialogPacket("quit", "quit", "quit", sessionIDd, timeStampDef)))).putAndFrow();
             }
         } else {
             System.out.println("Permission Code checking in 'users' problem");
+            (new SendPacket(oos, (new DialogPacket("quit", "quit", "quit", sessionIDd, timeStampDef)))).putAndFrow();
         }
     }
 }

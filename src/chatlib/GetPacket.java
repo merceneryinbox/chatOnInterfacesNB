@@ -14,22 +14,27 @@ import markerIface.DialogPacket;
  *
  * @author mercenery
  */
-public class GetAuthoPackFromServer implements DialogPackReader {
+public class GetPacket implements DialogPackReader {
 
     private static ObjectInputStream ois;
-    private static DialogPacket authBPacket;
+    private static DialogPacket packet;
 
-    public GetAuthoPackFromServer(ObjectInputStream ois) {
-        GetAuthoPackFromServer.ois = ois;
+    public GetPacket(ObjectInputStream ois) {
+        GetPacket.ois = ois;
     }
 
     @Override
     public DialogPacket lookingForPacket() {
         try {
-            authBPacket = (DialogPacket) ois.readObject();
+            packet = (DialogPacket) ois.readObject();
+            ois.close();
         } catch (IOException | ClassNotFoundException e) {
+        } finally {
+            try {
+                ois.close();
+            } catch (IOException e) {
+            }
         }
-        return authBPacket;
+        return packet;
     }
-
 }
