@@ -31,14 +31,12 @@ public class AuthorizationServer {
                 serviceAurh.execute(new RunAuthorization(socket));
             }
         } catch (IOException e1) {
-            e1.printStackTrace();
         } finally {
             System.out.println("Finally closing resources in AuthorizationServer starts");
             try {
                 socket.close();
                 serviceAurh.shutdown();
             } catch (IOException e) {
-                e.printStackTrace();
             }
         }
     }

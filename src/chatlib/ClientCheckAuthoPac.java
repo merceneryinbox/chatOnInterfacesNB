@@ -6,6 +6,8 @@
 package chatlib;
 
 import chatProInterfaces.AuthoPackChecker;
+import java.io.ObjectInputStream;
+import java.net.Socket;
 import markerIface.DialogPacket;
 
 /**
@@ -14,20 +16,24 @@ import markerIface.DialogPacket;
  */
 public class ClientCheckAuthoPac implements AuthoPackChecker {
 
-    private static DialogPacket authPack;
-    private static String codeWord;
+    private final Socket socket;
+    private DialogPacket authPack;
+    private String codeWord;
+    private boolean result;
 
-    public ClientCheckAuthoPac(DialogPacket authPack) {
-        ClientCheckAuthoPac.authPack = authPack;
+    public ClientCheckAuthoPac(Socket socket) {
+        this.socket = socket;
     }
 
     @Override
     public boolean authoCheck() {
-        codeWord = authPack.log;
-        if (codeWord.equalsIgnoreCase("quit")) {
-            return false;
-        }
-        return true;
-    }
+        try (ObjectInputStream ois = new ObjectInputStream(socket.getInputStream())) {
+            authPack = (DialogPacket) ois.readObject();
+            codeWord = authPack.log;
+            result = !codeWord.equalsIgnoreCase("quit");
 
+        } catch (Exception e) {
+        }
+        return result;
+    }
 }
