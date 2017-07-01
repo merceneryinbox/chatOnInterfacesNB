@@ -18,6 +18,10 @@ public class ClientCheckAuthoPac implements AuthoPackChecker {
 
     private final Socket socket;
     private DialogPacket authPack;
+
+    public DialogPacket getAuthPack() {
+        return authPack;
+    }
     private String codeWord;
     private boolean result;
 

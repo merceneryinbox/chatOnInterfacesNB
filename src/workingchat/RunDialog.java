@@ -12,7 +12,7 @@ import markerIface.DialogPacket;
  */
 public class RunDialog implements Runnable {
 
-    private Socket socket;
+    private final Socket socket;
     private Connection connectionDB;
     private PreparedStatement pSControllUserIncom;
     private PreparedStatement pSSaveFirstPackInUsers;
@@ -21,7 +21,7 @@ public class RunDialog implements Runnable {
 
     private ResultSet resultSet;
     private long timeStampfromDB;
-    private long timeStampServerDialog;
+    private final long timeStampServerDialog;
     private long deltaTime;
     private DialogPacket dialogPacket;
     private DialogPacket dialogPacketToUser;
@@ -61,7 +61,7 @@ public class RunDialog implements Runnable {
                 ObjectInputStream objectInputStream = new ObjectInputStream(socket.getInputStream())) {
             System.out.println("Reading dialogpacket from user from socket");
 
-            dialogPacket = new GetPacket(objectInputStream).lookingForPacket();
+            dialogPacket = new GetPacket(socket).lookingForPacket();
 
             System.out.println("Gathering all data about connected users port");
             String ipadress = String.valueOf(socket.getInetAddress());
@@ -79,6 +79,14 @@ public class RunDialog implements Runnable {
             boolean checkInBase = resultSet.next();
             if (checkInBase == false) {// если нет в базе текущих сессий выключаем канал
                 System.out.println("User not allowed for chatting, close session");
+                psSIlligalAttempt.setString(1, logFromUser);
+                psSIlligalAttempt.setString(2, pasFromUser);
+                psSIlligalAttempt.setString(3, "session not permited, you are disconnected");
+                psSIlligalAttempt.setInt(4, sessionidFromUser);
+                psSIlligalAttempt.setLong(5, timeStampServerDialog);
+                psSIlligalAttempt.setString(6, ipadress);
+                psSIlligalAttempt.executeUpdate();
+
                 closeSession();
             }
 
@@ -96,7 +104,7 @@ public class RunDialog implements Runnable {
                 System.out.println("Session is out of date. Make record into DB about this fact");
                 psSIlligalAttempt.setString(1, logFromUser);
                 psSIlligalAttempt.setString(2, pasFromUser);
-                psSIlligalAttempt.setString(3, "session is outdated, you are disconnected");
+                psSIlligalAttempt.setString(3, messageFromUser + " at : " + timeStampFromUser + "session is outdated, you are disconnected");
                 psSIlligalAttempt.setInt(4, sessionidFromUser);
                 psSIlligalAttempt.setLong(5, timeStampServerDialog);
                 psSIlligalAttempt.setString(6, ipadress);
@@ -160,12 +168,7 @@ public class RunDialog implements Runnable {
                     break;
                 }
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (IOException | ClassNotFoundException | SQLException e) {
         }
     }
 
@@ -179,10 +182,7 @@ public class RunDialog implements Runnable {
             connectionDB.close();
             socket.close();
             System.exit(0);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (IOException | SQLException e) {
         }
     }
 }

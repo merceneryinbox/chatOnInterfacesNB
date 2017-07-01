@@ -8,6 +8,7 @@ package chatlib;
 import chatProInterfaces.DialogPackReader;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.net.Socket;
 import markerIface.DialogPacket;
 
 /**
@@ -16,11 +17,14 @@ import markerIface.DialogPacket;
  */
 public class GetPacket implements DialogPackReader {
 
-    private static ObjectInputStream ois;
-    private static DialogPacket packet;
+    private final Socket socket;
+    private final ObjectInputStream ois;
+    private DialogPacket packet;
 
-    public GetPacket(ObjectInputStream ois) {
-        GetPacket.ois = ois;
+    public GetPacket(Socket socket) throws IOException {
+        this.socket = socket;
+        ois = new ObjectInputStream(socket.getInputStream());
+
     }
 
     @Override
@@ -32,6 +36,7 @@ public class GetPacket implements DialogPackReader {
         } finally {
             try {
                 ois.close();
+                socket.close();
             } catch (IOException e) {
             }
         }

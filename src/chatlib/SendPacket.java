@@ -8,6 +8,7 @@ package chatlib;
 import chatProInterfaces.DialogPacketSender;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+import java.net.Socket;
 import markerIface.DialogPacket;
 
 /**
@@ -16,12 +17,14 @@ import markerIface.DialogPacket;
  */
 public class SendPacket implements DialogPacketSender {
 
+    private final Socket socket;
     private final ObjectOutputStream oos;
     private final DialogPacket mesPacket;
 
-    public SendPacket(ObjectOutputStream oos, DialogPacket mesPacket) {
-        this.oos = oos;
+    public SendPacket(Socket socket, DialogPacket mesPacket) throws IOException {
+        this.socket = socket;
         this.mesPacket = mesPacket;
+        oos = new ObjectOutputStream(socket.getOutputStream());
     }
 
     @Override

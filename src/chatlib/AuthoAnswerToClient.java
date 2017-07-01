@@ -6,7 +6,7 @@
 package chatlib;
 
 import chatProInterfaces.DialogPacketSender;
-import java.io.ObjectOutputStream;
+import java.io.IOException;
 import java.net.Socket;
 import markerIface.DialogPacket;
 
@@ -32,7 +32,7 @@ public class AuthoAnswerToClient implements DialogPacketSender {
 
     @Override
     public boolean putAndFrow() {
-        try (ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream())) {
+        try {
             int code = new ChatProPostgresDBQueries().checkPermission(login);
             if (code == -1) {
                 authBackPacket = new DialogPacket("quit", "quit", "quit", 0, 0);
@@ -40,8 +40,8 @@ public class AuthoAnswerToClient implements DialogPacketSender {
                 authBackPacket = new DialogPacket("ok", "ok", "ok", session, time);
                 isOk = true;
             }
-            boolean isputAndFrowOk = new SendPacket(oos, authBackPacket).putAndFrow();
-        } catch (Exception e) {
+            boolean isputAndFrowOk = new SendPacket(socket, authBackPacket).putAndFrow();
+        } catch (IOException e) {
             return false;
         }
         return isOk;

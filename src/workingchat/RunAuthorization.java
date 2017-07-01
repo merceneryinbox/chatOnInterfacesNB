@@ -13,6 +13,8 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.sql.*;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import markerIface.DialogPacket;
 
 /**
@@ -52,9 +54,13 @@ public class RunAuthorization implements Runnable {
      */
     @Override
     public void run() {
-        authPacket = new GetPacket(ois).lookingForPacket();
-        loginFromPacket = authPacket.log;
-        pasFromPacket = authPacket.pass;
-        isUOkInSes = new AuthoAnswerToClient(socketClient, loginFromPacket, sessionIDd, timeStampDef).putAndFrow();
+        try {
+            authPacket = new GetPacket(socketClient).lookingForPacket();
+            loginFromPacket = authPacket.log;
+            pasFromPacket = authPacket.pass;
+            isUOkInSes = new AuthoAnswerToClient(socketClient, loginFromPacket, sessionIDd, timeStampDef).putAndFrow();
+        } catch (IOException ex) {
+            Logger.getLogger(RunAuthorization.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 }
