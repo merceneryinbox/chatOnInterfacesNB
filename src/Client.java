@@ -3,7 +3,6 @@ import chatlib.ClientCheckAuthoPac;
 import chatlib.ClientSendAuthoPackToAS;
 import chatlib.ClientToAuthChatServerConnect;
 import chatlib.ClientToDialogChatServerConnect;
-import chatlib.GetPacket;
 import chatlib.SendPacket;
 import java.io.*;
 import java.net.Socket;
@@ -55,14 +54,12 @@ public class Client {
                 System.err.println("Connection refused during authorization.");
                 System.exit(-1);
             }
-            int session = clientCheckAuthoPac.getAuthPack().sessionId;
-            long time = clientCheckAuthoPac.getAuthPack().timeStampFromDiPa;
-            Socket socketInLoop = new ClientToDialogChatServerConnect().connectToServer();
-            boolean firstDPInDialog = new SendPacket(socketInLoop, clientCheckAuthoPac.getAuthPack()).putAndFrow();
 
-            if (firstDPInDialog) {
-                DialogPacket getFirstResponseP = new GetPacket(socketInLoop).lookingForPacket();
-                System.out.println(getFirstResponseP.message);
+            Socket socketInLoop = new ClientToDialogChatServerConnect().connectToServer();
+            boolean firstBPInDialog = new SendPacket(socketInLoop, clientCheckAuthoPac.getAuthPack()).putAndFrow();
+            if (firstBPInDialog) {
+                int session = clientCheckAuthoPac.getAuthPack().sessionId;
+                long time = clientCheckAuthoPac.getAuthPack().timeStampFromDiPa;
                 while (!socketInLoop.isClosed()) {
                     try (BufferedReader br = new BufferedReader(new InputStreamReader(System.in))) {
                         System.out.println("Input your message: ");
@@ -70,23 +67,12 @@ public class Client {
                         DialogPacket mesPack = new DialogPacket(loginInClient, pasInClient, message, session, time);
                         boolean sendInLoopOk = new SendPacket(socketInLoop, mesPack).putAndFrow();
                         if (sendInLoopOk) {
-                            DialogPacket getResponsePInLoop = new GetPacket(socketInLoop).lookingForPacket();
                         }
                     } catch (Exception e) {
-                    } finally {
-                        try {
-                            socketInLoop.close();
-                        } catch (IOException e) {
-                        }
                     }
                 }
             }
         } catch (IOException e) {
-        } finally {
-            try {
-                socketAuth.close();
-            } catch (IOException e) {
-            }
         }
     }
 }
